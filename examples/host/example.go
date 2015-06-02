@@ -11,12 +11,11 @@ func main() {
 	gonetchan.EstablishChannelAsHost(channel, "", ":8080")
 
 	for {
-		time.Sleep(2 * time.Second)
 		select {
 		case msg := <-channel:
 			fmt.Println(msg)
-		default:
-			fmt.Println("No new msg")
+		case <-time.After(time.Second):
+			fmt.Println("Timed out, try again")
 		}
 	}
 }
