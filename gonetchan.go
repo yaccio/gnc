@@ -25,16 +25,7 @@ func EstablishChannelAsHost(channel interface{}, value interface{}, addr string)
 			if err != nil {
 				fmt.Printf("Connection failed: %s\n", err.Error())
 			}
-
-			cnl := make(chan interface{})   //Wrapper of channel
-			write := make(chan interface{}) //Channel that writes over network
-			read := make(chan interface{})  //Channel that reads from network
-
-			go wrapchannel(channel, cnl)
-			go handlereads(read, value, conn)
-			go handlewrites(write, conn)
-
-			go syncchannels(cnl, write, read)
+			setupchannels(channel, value)
 		}
 	}()
 
@@ -51,6 +42,16 @@ func EstablishChannelAsClient(channel interface{}, value interface{}, addr strin
 	if err != nil {
 		return err
 	}
+
+	go setupchannels(channel, value)
+
+	return nil
+}
+
+/*
+setupchannels setups the channels to communicate over the network.
+*/
+func setupchannels(channel, value interface{}) {
 	cnl := make(chan interface{})   //Wrapper of channel
 	write := make(chan interface{}) //Channel that writes over network
 	read := make(chan interface{})  //Channel that reads from network
@@ -59,9 +60,7 @@ func EstablishChannelAsClient(channel interface{}, value interface{}, addr strin
 	go handlereads(read, value, conn)
 	go handlewrites(write, conn)
 
-	go syncchannels(cnl, write, read)
-
-	return nil
+	syncchannels(cnl, write, read)
 }
 
 /*
