@@ -1,4 +1,4 @@
-package gonetchan
+package gnc
 
 import (
 	"bufio"
@@ -25,7 +25,7 @@ func EstablishChannelAsHost(channel interface{}, value interface{}, addr string)
 			if err != nil {
 				fmt.Printf("Connection failed: %s\n", err.Error())
 			}
-			setupchannels(channel, value)
+			setupchannels(channel, value, conn)
 		}
 	}()
 
@@ -43,7 +43,7 @@ func EstablishChannelAsClient(channel interface{}, value interface{}, addr strin
 		return err
 	}
 
-	go setupchannels(channel, value)
+	go setupchannels(channel, value, conn)
 
 	return nil
 }
@@ -51,7 +51,7 @@ func EstablishChannelAsClient(channel interface{}, value interface{}, addr strin
 /*
 setupchannels setups the channels to communicate over the network.
 */
-func setupchannels(channel, value interface{}) {
+func setupchannels(channel, value interface{}, conn net.Conn) {
 	cnl := make(chan interface{})   //Wrapper of channel
 	write := make(chan interface{}) //Channel that writes over network
 	read := make(chan interface{})  //Channel that reads from network
@@ -101,8 +101,8 @@ func syncchannels(cnl, write, read chan interface{}) {
 }
 
 func handlereads(channel chan interface{}, value interface{}, conn net.Conn) {
+	reader := bufio.NewReader(conn)
 	for {
-		reader := bufio.NewReader(conn)
 		data, err := reader.ReadBytes(0x1F)
 
 		if err != nil {

@@ -1,6 +1,11 @@
-#Go Net Chan
-Library for establishing native Go channels between different Go programs
-potentially running on separate machines.
+#Go Net Chan (GNC)
+Library for using native Go channels between multiple Go programs over network.
+
+Currently support single channel between two programs using TCP, one program
+acts as "host", the other as client that connects to the host. See example
+folder for a very small example.
+
+Status: **Experimental**
 
 #TODO
 - Increase robustness (fault tolerance: reconnect after disconnect).

@@ -1,17 +1,16 @@
 package main
 
 import (
-	"fmt"
-	"github.com/yaccio/gonetchan"
+	"github.com/yaccio/gnc"
+	"time"
 )
 
 func main() {
-	channel := make(chan string, 2)
-	gonetchan.EstablishChannelAsClient(channel, "", "localhost:8080")
+	channel := make(chan string)
+	gnc.EstablishChannelAsClient(channel, "", "localhost:8080")
 
 	for {
-		var input string
-		fmt.Scanln(&input)
-		channel <- input
+		channel <- "This is an example"
+		time.Sleep(time.Second * 3)
 	}
 }
